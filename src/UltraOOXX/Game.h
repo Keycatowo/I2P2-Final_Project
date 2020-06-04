@@ -37,21 +37,22 @@ namespace TA
             if( !prepareState() ) return ;
 
             //Todo: Play Game
+            MainBoard.get(5,5)=BoardInterface::Tag::O;
             putToGui("Hello world %d\n", 123);
             updateGuiGame();
 
-            while (!checkGameover()) {          
+            while (!checkGameover()) {
                 round++;
                 AIInterface *first = nullptr;
                 AIInterface *second = nullptr;
                 BoardInterface::Tag tag = BoardInterface::Tag::O;
 
                 if (!playOneRound(first, tag, second)) {
-                    
+
                 }
                 updateGuiGame();
-            } 
-        } 
+            }
+        }
 
    private:
         void updateGuiGame()
@@ -77,7 +78,7 @@ namespace TA
             return true;
         }
 
-        template<typename Func ,typename... Args, 
+        template<typename Func ,typename... Args,
             std::enable_if_t< std::is_void<
                     std::invoke_result_t<Func, AIInterface, Args...>
                 >::value , int> = 0 >
@@ -94,7 +95,7 @@ namespace TA
             val.get();
         }
 
-        template<typename Func ,typename... Args, 
+        template<typename Func ,typename... Args,
             std::enable_if_t< std::is_void<
                     std::invoke_result_t<Func, AIInterface, Args...>
                 >::value == false, int> = 0 >
@@ -127,9 +128,9 @@ namespace TA
             gui->appendText( std::string(buf.begin(), buf.end()) );
         }
 
-        bool checkAI(AIInterface *ptr) 
+        bool checkAI(AIInterface *ptr)
         {
-            return ptr->abi() == AI_ABI_VER;
+            return ptr->abi() == AI_ABI_VER;//to check the interface same with TA's
         }
 
         int m_size;
