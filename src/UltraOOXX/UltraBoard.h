@@ -34,6 +34,15 @@ namespace TA {
             return b[x][y].getWinTag();
         };
 
+        bool full() const {
+            // check UltraBoard is filled all Board or not
+            for (int i=0;i<3;++i)
+                for (int j=0;j<3;++j)
+                    if (!b[i][j].full())
+                        return false;
+            return true;
+        }
+
     private:
         Board b[3][3];  // 9 Boards
     };

@@ -37,8 +37,12 @@ namespace TA
             if( !prepareState() ) return ;
 
             //Todo: Play Game
-            MainBoard.get(5,5)=BoardInterface::Tag::O;
-            putToGui("Hello world %d\n", 123);
+            for (int i=0; i<9; ++i)
+                for (int j=0; j<9; ++j)
+                    MainBoard.get(i,j)=BoardInterface::Tag::O;
+
+            if(MainBoard.full())
+                putToGui("Hello world full%d\n", 123);
             updateGuiGame();
 
             while (!checkGameover()) {
