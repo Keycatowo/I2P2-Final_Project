@@ -48,39 +48,38 @@ namespace TA {
             if(getWinTag()!=Tag::None)
                 return getWinTag();
             // row and col
+            for(int i=0;i<9;i++)
+                b[i/3][i%3].judgeWinState();
+
             for(int i=0; i<3; ++i){
                 if(b[0][i].getWinTag()==Tag::O &&b[1][i].getWinTag()==Tag::O &&b[2][i].getWinTag()==Tag::O)
-                    {setWinTag( Tag::O); return Tag::O;}
+                    return Tag::O;
                 if(b[0][i].getWinTag()==Tag::X &&b[1][i].getWinTag()==Tag::X &&b[2][i].getWinTag()==Tag::X)
-                    {setWinTag( Tag::X); return Tag::X;}
+                    return Tag::X;
                 if(b[i][0].getWinTag()==Tag::O &&b[i][1].getWinTag()==Tag::O &&b[i][2].getWinTag()==Tag::O)
-                    {setWinTag( Tag::O); return Tag::O;}
+                    return Tag::O;
                 if(b[i][0].getWinTag()==Tag::X &&b[i][1].getWinTag()==Tag::X &&b[i][2].getWinTag()==Tag::X)
-                    {setWinTag( Tag::X); return Tag::X;}
+                    return Tag::X;
             }
 
             // slash
             if(b[0][0].getWinTag()==Tag::O &&b[1][1].getWinTag()==Tag::O &&b[2][2].getWinTag()==Tag::O)
-                {setWinTag( Tag::O); return Tag::O;}
+                return Tag::O;
             if(b[0][0].getWinTag()==Tag::X &&b[1][1].getWinTag()==Tag::X &&b[2][2].getWinTag()==Tag::X)
-                {setWinTag( Tag::X); return Tag::X;}
+                return Tag::X;
             if(b[0][2].getWinTag()==Tag::O &&b[1][1].getWinTag()==Tag::O &&b[2][0].getWinTag()==Tag::O)
-                {setWinTag( Tag::O); return Tag::O;}
+                return Tag::O;
             if(b[0][2].getWinTag()==Tag::X &&b[1][1].getWinTag()==Tag::X &&b[2][0].getWinTag()==Tag::X)
-                {setWinTag( Tag::X); return Tag::X;}
+                return Tag::X;
 
             if(full()){
-                setWinTag( Tag::Tie);
                 return Tag::Tie;
             }
             else{
-                setWinTag( Tag::None);
                 return Tag::None;
             }
         }
 
-        Board get_Board(int x, int y){return b[x][y];}
-        
     private:
         Board b[3][3];  // 9 Boards
     };

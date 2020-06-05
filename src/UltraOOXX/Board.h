@@ -69,33 +69,29 @@ namespace TA {
             // row and col
             for(int i=0; i<3; ++i){
                 if(b[0][i]==Tag::O &&b[1][i]==Tag::O &&b[2][i]==Tag::O)
-                    {setWinTag( Tag::O); return Tag::O;}
+                    return Tag::O;
                 if(b[0][i]==Tag::X &&b[1][i]==Tag::X &&b[2][i]==Tag::X)
-                    {setWinTag( Tag::X); return Tag::X;}
+                    return Tag::X;
                 if(b[i][0]==Tag::O &&b[i][1]==Tag::O &&b[i][2]==Tag::O)
-                    {setWinTag( Tag::O); return Tag::O;}
+                    return Tag::O;
                 if(b[i][0]==Tag::X &&b[i][1]==Tag::X &&b[i][2]==Tag::X)
-                    {setWinTag( Tag::X); return Tag::X;}
+                    return Tag::X;
             }
 
             // slash
             if(b[0][0]==Tag::O &&b[1][1]==Tag::O &&b[2][2]==Tag::O)
-                {setWinTag( Tag::O); return Tag::O;}
+                return Tag::O;
             if(b[0][0]==Tag::X &&b[1][1]==Tag::X &&b[2][2]==Tag::X)
-                {setWinTag( Tag::X); return Tag::X;}
+                return Tag::X;
             if(b[0][2]==Tag::O &&b[1][1]==Tag::O &&b[2][0]==Tag::O)
-                {setWinTag( Tag::O); return Tag::O;}
+                return Tag::O;
             if(b[0][2]==Tag::X &&b[1][1]==Tag::X &&b[2][0]==Tag::X)
-                {setWinTag( Tag::X); return Tag::X;}
+                return Tag::X;
 
-            if(full()){
-                setWinTag( Tag::Tie);
+            if(full())
                 return Tag::Tie;
-            }
-            else{
-                setWinTag( Tag::None);
+            else
                 return Tag::None;
-            }
 
         }
 
