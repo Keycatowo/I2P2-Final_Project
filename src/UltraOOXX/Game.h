@@ -56,6 +56,29 @@ namespace TA
                 }
                 updateGuiGame();
             }
+
+            for (int i=0; i<3; ++i){
+                for (int j=0; j<3; ++j){
+                    if(MainBoard.get_Board(i,j).getWinTag() == BoardInterface::Tag::None)
+                        putToGui("O");
+                    else
+                        putToGui("*");
+                }
+                putToGui("\n");
+            }
+
+            // MainBoard.setWinTag(BoardInterface::Tag::O);
+            if(MainBoard.getWinTag() == BoardInterface::Tag::O)
+                putToGui("O wins\n");
+            else if(MainBoard.getWinTag() == BoardInterface::Tag::X)
+                putToGui("X wins\n");
+            else if(MainBoard.getWinTag() == BoardInterface::Tag::Tie)
+                putToGui("Tie\n");
+            else
+                putToGui("None\n");
+            updateGuiGame();
+
+
         }
 
    private:
@@ -72,7 +95,12 @@ namespace TA
 
         bool checkGameover()
         {
-            return true; // Gameover!
+            if(MainBoard.judgeWinState() != BoardInterface::Tag::None){
+                MainBoard.setWinTag(MainBoard.judgeWinState());
+                return true; // Gameover!
+            }
+            else
+                return false;
         }
 
         bool prepareState()
