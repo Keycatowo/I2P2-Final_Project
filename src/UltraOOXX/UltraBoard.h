@@ -12,6 +12,7 @@ namespace TA {
 
         void reset() {
             //for each board(3*3), reset it
+            setWinTag(Tag::None);
             for (int i=0;i<3;++i)
                 for (int j=0;j<3;++j)
                     b[i][j].reset();
@@ -48,11 +49,8 @@ namespace TA {
             if(getWinTag()!=Tag::None)
                 return getWinTag();
             // row and col
-            for(int i=0;i<9;i++)
-                b[i/3][i%3].judgeWinState();
-
             for(int i=0; i<3; ++i){
-                if(b[0][i].getWinTag()==Tag::O &&b[1][i].getWinTag()==Tag::O &&b[2][i].getWinTag()==Tag::O)
+                if(b[0][i].getWinTag()==Tag::O && b[1][i].getWinTag()==Tag::O && b[2][i].getWinTag()==Tag::O)
                     return Tag::O;
                 if(b[0][i].getWinTag()==Tag::X &&b[1][i].getWinTag()==Tag::X &&b[2][i].getWinTag()==Tag::X)
                     return Tag::X;

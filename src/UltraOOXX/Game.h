@@ -38,12 +38,13 @@ namespace TA
 
             //Todo: Play Game
             for (int i=0; i<9; ++i)
-                for (int j=0; j<9; ++j)
+                for (int j=0; j<9; ++j){
                     MainBoard.get(i,j)=BoardInterface::Tag::O;
+                    MainBoard.sub(i/3,j/3).setWinTag(MainBoard.sub(i/3,j/3).judgeWinState());
+                    MainBoard.setWinTag(MainBoard.judgeWinState());
+                }
 
-            if(MainBoard.full())
-                putToGui("Hello world full%d\n", 123);
-            updateGuiGame();
+
 
             while (!checkGameover()) {
                 round++;
@@ -59,7 +60,7 @@ namespace TA
 
             for (int i=0; i<3; ++i){
                 for (int j=0; j<3; ++j){
-                    if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)
+                    if(MainBoard.sub(i,j).getWinTag() == BoardInterface::Tag::O)
                         putToGui("O");
                     else
                         putToGui("*");
@@ -67,15 +68,15 @@ namespace TA
                 putToGui("\n");
             }
 
-            // // MainBoard.setWinTag(BoardInterface::Tag::O);
-            // if(MainBoard.getWinTag() == BoardInterface::Tag::O)
-            //     putToGui("O wins\n");
-            // else if(MainBoard.getWinTag() == BoardInterface::Tag::X)
-            //     putToGui("X wins\n");
-            // else if(MainBoard.getWinTag() == BoardInterface::Tag::Tie)
-            //     putToGui("Tie\n");
-            // else
-            //     putToGui("None\n");
+
+            if(MainBoard.getWinTag() == BoardInterface::Tag::O)
+                putToGui("O wins\n");
+            else if(MainBoard.getWinTag() == BoardInterface::Tag::X)
+                putToGui("X wins\n");
+            else if(MainBoard.getWinTag() == BoardInterface::Tag::Tie)
+                putToGui("Tie\n");
+            else
+                putToGui("None\n");
             updateGuiGame();
 
 
