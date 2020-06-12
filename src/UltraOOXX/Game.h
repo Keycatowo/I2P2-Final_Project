@@ -37,13 +37,14 @@ namespace TA
             if( !prepareState() ) return ;
 
             //Todo: Play Game
+            /*
             for (int i=0; i<9; ++i)
                 for (int j=0; j<9; ++j){
                     MainBoard.get(i,j)=BoardInterface::Tag::O;
                     MainBoard.sub(i/3,j/3).setWinTag(MainBoard.sub(i/3,j/3).judgeWinState());
                     MainBoard.setWinTag(MainBoard.judgeWinState());
                 }
-
+            */
 
 
             while (!checkGameover()) {
@@ -90,7 +91,15 @@ namespace TA
 
         bool playOneRound(AIInterface *user, BoardInterface::Tag tag, AIInterface *enemy)
         {
+
             auto pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
+            if(pos.first==-1)
+                return false;
+            MainBoard.get(pos.first, pos.second) = Board::Tag::O;
+            pos = call(&AIInterface::queryWhereToPut, enemy, MainBoard);
+            if(pos.first==-1)
+                return false;
+            MainBoard.get(pos.first, pos.second) = Board::Tag::X;
             return true;
         }
 
