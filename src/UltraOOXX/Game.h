@@ -40,25 +40,34 @@ namespace TA
             /*
             for (int i=0; i<9; ++i)
                 for (int j=0; j<9; ++j){
-                    MainBoard.get(i,j)=BoardInterface::Tag::O;
+                    if((i+j)%2)
+                        MainBoard.get(i,j)=BoardInterface::Tag::O;
+                    else
+                        MainBoard.get(i,j)=BoardInterface::Tag::X;
                     MainBoard.sub(i/3,j/3).setWinTag(MainBoard.sub(i/3,j/3).judgeWinState());
                     MainBoard.setWinTag(MainBoard.judgeWinState());
                 }
             */
 
-
+            
             while (!checkGameover()) {
                 round++;
-                AIInterface *first = nullptr;
-                AIInterface *second = nullptr;
+                AIInterface *first = m_P1;
+                AIInterface *second = m_P2;
                 BoardInterface::Tag tag = BoardInterface::Tag::O;
 
                 if (!playOneRound(first, tag, second)) {
-
+                    break;
                 }
                 updateGuiGame();
             }
+            
+           
 
+
+
+
+            /* print the result of each Borad */
             for (int i=0; i<3; ++i){
                 for (int j=0; j<3; ++j){
                     if(MainBoard.sub(i,j).getWinTag() == BoardInterface::Tag::O)
@@ -69,7 +78,7 @@ namespace TA
                 putToGui("\n");
             }
 
-
+            /* print the result of winner */
             if(MainBoard.getWinTag() == BoardInterface::Tag::O)
                 putToGui("O wins\n");
             else if(MainBoard.getWinTag() == BoardInterface::Tag::X)
@@ -93,6 +102,7 @@ namespace TA
         {
 
             auto pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
+            //enemy->callbackReportEnemy(pos.first,pos.second);
             if(pos.first==-1)
                 return false;
             MainBoard.get(pos.first, pos.second) = Board::Tag::O;
