@@ -70,8 +70,10 @@ namespace TA
             /* print the result of each Borad */
             for (int i=0; i<3; ++i){
                 for (int j=0; j<3; ++j){
-                    if(MainBoard.sub(i,j).getWinTag() == BoardInterface::Tag::O)
+                    if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)
                         putToGui("O");
+                    else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::X)
+                        putToGui("X");
                     else
                         putToGui("*");
                 }
@@ -79,11 +81,11 @@ namespace TA
             }
 
             /* print the result of winner */
-            if(MainBoard.getWinTag() == BoardInterface::Tag::O)
+            if(MainBoard.judgeWinState() == BoardInterface::Tag::O)
                 putToGui("O wins\n");
-            else if(MainBoard.getWinTag() == BoardInterface::Tag::X)
+            else if(MainBoard.judgeWinState() == BoardInterface::Tag::X)
                 putToGui("X wins\n");
-            else if(MainBoard.getWinTag() == BoardInterface::Tag::Tie)
+            else if(MainBoard.judgeWinState() == BoardInterface::Tag::Tie)
                 putToGui("Tie\n");
             else
                 putToGui("None\n");
@@ -102,14 +104,16 @@ namespace TA
         {
 
             auto pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
-            //enemy->callbackReportEnemy(pos.first,pos.second);
             if(pos.first==-1)
                 return false;
-            MainBoard.get(pos.first, pos.second) = Board::Tag::O;
+            MainBoard.get(pos.first, pos.second) = tag;
+            enemy->callbackReportEnemy(pos.first,pos.second);
+            
             pos = call(&AIInterface::queryWhereToPut, enemy, MainBoard);
             if(pos.first==-1)
                 return false;
-            MainBoard.get(pos.first, pos.second) = Board::Tag::X;
+            MainBoard.get(pos.first, pos.second) = (tag == Board::Tag::O)? Board::Tag::X : Board::Tag::O;
+            user->callbackReportEnemy(pos.first,pos.second);
             return true;
         }
 
