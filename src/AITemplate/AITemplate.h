@@ -14,6 +14,7 @@ public:
     {
         // any way
         this->order = order;
+        we_tag = order ? TA::Board::Tag::O : TA::Board::Tag::X;
     }
 
     void callbackReportEnemy(int x, int y) override
