@@ -103,17 +103,16 @@ namespace TA
         bool playOneRound(AIInterface *user, BoardInterface::Tag tag, AIInterface *enemy)
         {
 
-            auto pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
-            if(pos.first==-1)
-                return false;
-            MainBoard.get(pos.first, pos.second) = tag;
-            enemy->callbackReportEnemy(pos.first,pos.second);
+            auto user_pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
+            if(user_pos.first==-1) return false;
             
-            pos = call(&AIInterface::queryWhereToPut, enemy, MainBoard);
-            if(pos.first==-1)
-                return false;
-            MainBoard.get(pos.first, pos.second) = (tag == Board::Tag::O)? Board::Tag::X : Board::Tag::O;
-            user->callbackReportEnemy(pos.first,pos.second);
+            MainBoard.get(user_pos.first, user_pos.second) = tag;
+            enemy->callbackReportEnemy(user_pos.first, user_pos.second);
+            
+            auto enemy_pos = call(&AIInterface::queryWhereToPut, enemy, MainBoard);
+            if(enemy_pos.first==-1) return false;
+            MainBoard.get(enemy_pos.first, enemy_pos.second) = (tag == Board::Tag::O)? Board::Tag::X : Board::Tag::O;
+            user->callbackReportEnemy(enemy_pos.first,enemy_pos.second);
             return true;
         }
 
