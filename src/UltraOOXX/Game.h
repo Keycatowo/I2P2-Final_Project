@@ -33,7 +33,7 @@ namespace TA
         void run()
         {
             gui->title();
-            int round = 0;
+            round = 0;
             if( !prepareState() ) return ;
 
             //Todo: Play Game
@@ -49,71 +49,96 @@ namespace TA
                 }
             */
 
-            
-            while (!checkGameover()) {
+            //下棋
+            while (!checkGameover()) 
+            {
+                AIInterface *now_player, *next_player;
+                BoardInterface::Tag tag;
+
                 round++;
-                AIInterface *first = m_P1;
-                AIInterface *second = m_P2;
-                BoardInterface::Tag tag = BoardInterface::Tag::O;
-
-                if (!playOneRound(first, tag, second)) {
-                    break;
+                if(round%2==0)
+                {
+                    now_player = m_P1;
+                    next_player = m_P2;
+                    tag = BoardInterface::Tag::O;
                 }
-                updateGuiGame();
+                else
+                {
+                    now_player = m_P2;
+                    next_player = m_P1;
+                    tag = BoardInterface::Tag::X;
+                }
+
+                if (!playOneRound(now_player, tag, next_player)) break;
+
+                /* print the result of each Borad */
+                printBoard();
             }
-            
-           
+                    
+            /* print the result of winner */
+            printWinner();
+        }
 
+   private:
 
-
-
-            /* print the result of each Borad */
+        void printBoard()
+        {
             for (int i=0; i<3; ++i){
                 for (int j=0; j<3; ++j){
-                    if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)
-                        putToGui("O");
-                    else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::X)
-                        putToGui("X");
-                    else
-                        putToGui("*");
+                    if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)        putToGui("O");
+                    else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::X)   putToGui("X");
+                    else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::Tie) putToGui("*");
+                    else putToGui("-");
                 }
                 putToGui("\n");
             }
+            //updateGuiGame();
+        }
 
-            /* print the result of winner */
+        void printWinner()
+        {
             if(MainBoard.judgeWinState() == BoardInterface::Tag::O)
                 putToGui("O wins\n");
             else if(MainBoard.judgeWinState() == BoardInterface::Tag::X)
                 putToGui("X wins\n");
             else if(MainBoard.judgeWinState() == BoardInterface::Tag::Tie)
                 putToGui("Tie\n");
-            else
-                putToGui("None\n");
+            else if (0 <= round && round <=81)
+            {
+                if(round%2 == 0) putToGui("X wins\n");
+                else putToGui("O wins\n");
+            }
+            
             updateGuiGame();
-
-
         }
 
-   private:
         void updateGuiGame()
         {
             gui->updateGame(MainBoard);
         }
 
-        bool playOneRound(AIInterface *user, BoardInterface::Tag tag, AIInterface *enemy)
+        bool playOneRound(AIInterface *now_player, BoardInterface::Tag tag, AIInterface *next_player)
         {
+            auto pos = call(&AIInterface::queryWhereToPut, now_player, MainBoard);
+            if(!checkValid(pos)) return false;
+            MainBoard.get(pos.first, pos.second) = tag;
+            next_player->callbackReportEnemy(pos.first, pos.second);
+            if( MainBoard.sub(pos.first%3,pos.second%3).full() ) last_put=std::make_pair(-1,-1);
+            else last_put=pos;
+        }
 
-            auto user_pos = call(&AIInterface::queryWhereToPut, user, MainBoard);
-            if(user_pos.first==-1) return false;
+        bool checkValid( std::pair<int,int> pos)
+        {
             
-            MainBoard.get(user_pos.first, user_pos.second) = tag;
-            enemy->callbackReportEnemy(user_pos.first, user_pos.second);
-            
-            auto enemy_pos = call(&AIInterface::queryWhereToPut, enemy, MainBoard);
-            if(enemy_pos.first==-1) return false;
-            MainBoard.get(enemy_pos.first, enemy_pos.second) = (tag == Board::Tag::O)? Board::Tag::X : Board::Tag::O;
-            user->callbackReportEnemy(enemy_pos.first,enemy_pos.second);
-            return true;
+            //檢查是否下在非法的位置上
+            //如果位置非法，則判定輸掉比賽
+            //先檢查last_pos下在board的哪裡，然後再檢查pos下在ultra_board的位置
+            if(TA::UltraOOXX::MainBoard.get(pos.first,pos.second)==BoardInterface::Tag::None)
+            { 
+                if(last_put.first == -1 && last_put.second == -1) return true;
+                else if(last_put.first%3==pos.first/3&&last_put.second%3==pos.second/3) return true;
+            }
+            return false;
         }
 
         bool checkGameover()
@@ -130,6 +155,7 @@ namespace TA
         {
             call(&AIInterface::init, m_P1, true);
             call(&AIInterface::init, m_P2, false);
+            last_put=std::make_pair(-1,-1);
             return true;
         }
 
@@ -188,9 +214,12 @@ namespace TA
             return ptr->abi() == AI_ABI_VER;//to check the interface same with TA's
         }
 
+
         int m_size;
         std::vector<int> m_ship_size;
         std::chrono::milliseconds m_runtime_limit;
+        std::pair<int,int> last_put;
+        int round;
 
         AIInterface *m_P1;
         AIInterface *m_P2;
