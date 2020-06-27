@@ -84,7 +84,7 @@ public:
                 get(enemy_board.first, enemy_board.second) != TA::Board::Tag::None)
                 return i;
         }
-
+        
         /* check 6 : other middles */ 
         for(auto i: avaliable_points){
             if(i.first%3 == 1 && i.second%3 == 1)
@@ -100,6 +100,7 @@ public:
         }
 
         /* check 8 : empty place */
+        std::reverse(avaliable_points.begin(), avaliable_points.end());
         for(auto i : avaliable_points)
             return i;
 
