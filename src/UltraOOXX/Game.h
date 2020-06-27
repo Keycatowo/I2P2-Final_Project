@@ -63,6 +63,9 @@ namespace TA
             case 1:
                 step_play();
                 break;
+            case 2:
+                PVE();
+                break;
             default:
                auto_play();
            }
@@ -71,6 +74,11 @@ namespace TA
         }
 
    private:
+        void putToGui(std::string S)
+        {
+            gui->appendText(S);
+        }
+
         void clear_text(int clear_size = TEXT_SIZE)
         {
             for(int i(0);i<clear_size;i++)
@@ -80,32 +88,32 @@ namespace TA
         void show_menu(int mode_pos = 0)
         {
             clear_text();
-            gui->appendText("\t\tSelect the mode\n"); 
+            putToGui("\t\tSelect the mode\n"); 
             switch (mode_pos)
             {
             case 0:
-                gui->appendText("\t\t>[auto play]\n");
-                gui->appendText("\t\t [step play]\n");
-                gui->appendText("\t\t [person play]\n");
-                gui->appendText("\t\t [Authors]\n");
+                putToGui("\t\t>[auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play]\n");
+                putToGui("\t\t [Authors]\n");
                 break;
             case 1:
-                gui->appendText("\t\t [auto play]\n");
-                gui->appendText("\t\t>[step play]\n");
-                gui->appendText("\t\t [person play]\n");
-                gui->appendText("\t\t [Authors]\n");
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t>[step play]\n");
+                putToGui("\t\t [person play]\n");
+                putToGui("\t\t [Authors]\n");
                 break;
             case 2:
-                gui->appendText("\t\t [auto play]\n");
-                gui->appendText("\t\t [step play]\n");
-                gui->appendText("\t\t>[person play]\n");
-                gui->appendText("\t\t [Authors]\n");
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t>[person play]\n");
+                putToGui("\t\t [Authors]\n");
                 break;
             case 3:
-                gui->appendText("\t\t [auto play]\n");
-                gui->appendText("\t\t [step play]\n");
-                gui->appendText("\t\t [person play]\n");
-                gui->appendText("\t\t>[Authors]\n");
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play]\n");
+                putToGui("\t\t>[Authors]\n");
                 break;
             
             default:
@@ -203,6 +211,43 @@ namespace TA
             printWinner();
         }
 
+        void PVE()
+        {
+            //下棋
+            while (!checkGameover()) 
+            {
+                updateGuiGame();
+                printValid();
+                printBoard();
+                round++;
+                if(round%2==1)
+                {
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                        continue;
+                }
+                else
+                {
+                    ppos = std::make_pair(-1,-1);
+                    //do{
+                        std::cin>>ppos.first>>ppos.second;
+                    //}while(!checkValid(ppos));
+                    
+                    MainBoard.get(ppos.first, ppos.second) = BoardInterface::Tag::O;
+                    m_P2->callbackReportEnemy(ppos.first, ppos.second);
+                    if( MainBoard.sub(ppos.first%3,ppos.second%3).full() ) 
+                        last_put=std::make_pair(-1,-1);
+                    else 
+                        last_put=ppos;
+                    
+                    continue;
+                }
+            }
+           
+            /* print the result of winner */
+            printValid();
+            printBoard();
+            printWinner();
+        }
 
         void printBoard()
         {
@@ -272,6 +317,7 @@ namespace TA
 
         bool checkValid( std::pair<int,int> pos)
         {
+            //if(pos.first==-1 && pos.second==-1) return true;
             if(pos.first<0 || pos.first >8 || pos.second <0 || pos.second >8)
                 return false;
             //檢查是否下在非法的位置上
@@ -353,10 +399,7 @@ namespace TA
             gui->appendText( std::string(buf.begin(), buf.end()) );
         }*/
         
-        void putToGui(std::string S)
-        {
-            gui->appendText(S);
-        }
+        
 
 
         bool checkAI(AIInterface *ptr)
@@ -369,6 +412,7 @@ namespace TA
         std::vector<int> m_ship_size;
         std::chrono::milliseconds m_runtime_limit;
         std::pair<int,int> last_put;
+        std::pair<int,int> ppos;
         int round;
         int mode;
 

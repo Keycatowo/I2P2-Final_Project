@@ -15,6 +15,7 @@ public:
         // any way
         this->order = order;
         we_tag = order ? TA::Board::Tag::O : TA::Board::Tag::X;
+        you_tag = order ? TA::Board::Tag::X : TA::Board::Tag::O;
     }
 
     void callbackReportEnemy(int x, int y) override
@@ -59,6 +60,17 @@ public:
             tmp_mainboard.get(i.first, i.second) = we_tag;
             if(tmp_mainboard.judgeWinState() == we_tag)
                 return i;
+        }
+
+        /* check 1-2 :enemy can end the game */
+        for (auto begin = avaliable_points.begin();begin!=avaliable_points.end();){
+            auto i = *begin;
+            tmp_mainboard = mainboard;
+            tmp_mainboard.get(i.first, i.second) = you_tag;
+            if(tmp_mainboard.judgeWinState() == you_tag)
+                begin = avaliable_points.erase(begin);
+            else
+                begin++;
         }
 
         /* check 2 : put the Board already had result */ 
@@ -120,6 +132,7 @@ public:
 private:
     bool order;
     TA::Board::Tag we_tag;
+    TA::Board::Tag you_tag;
     int x;
     int y;
 };
