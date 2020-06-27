@@ -66,6 +66,9 @@ namespace TA
             case 2:
                 PVE();
                 break;
+            case 3:
+                exit(0);
+                break;
             default:
                auto_play();
            }
@@ -95,25 +98,25 @@ namespace TA
                 putToGui("\t\t>[auto play]\n");
                 putToGui("\t\t [step play]\n");
                 putToGui("\t\t [person play]\n");
-                putToGui("\t\t [Authors]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
             case 1:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t>[step play]\n");
                 putToGui("\t\t [person play]\n");
-                putToGui("\t\t [Authors]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
             case 2:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t [step play]\n");
                 putToGui("\t\t>[person play]\n");
-                putToGui("\t\t [Authors]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
             case 3:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t [step play]\n");
                 putToGui("\t\t [person play]\n");
-                putToGui("\t\t>[Authors]\n");
+                putToGui("\t\t>[Exit]\n");
                 break;
             
             default:
