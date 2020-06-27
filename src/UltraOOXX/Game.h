@@ -150,29 +150,25 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
-                usleep(100000);
+                usleep(20000000);
                 updateGuiGame();
-                printValid();
                 printBoard();
+                printValid();
+                round++;
                 if(round%2==0)
                 {
-                    if (playOneRound(m_P2, BoardInterface::Tag::O, m_P1)) 
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
                 }
                 else
                 {
-                    if (playOneRound(m_P1, BoardInterface::Tag::X, m_P2)) 
+                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
                         continue;
                 }
-                //if (!playOneRound(now_player, tag, next_player)) break;
-
-                /* print the result of each Borad */
-                //printBoard();
+                
             }
             printValid();
-            /* print the result of winner */
             printBoard();
-            
             printWinner();
         }
 
@@ -191,19 +187,14 @@ namespace TA
                 round++;
                 if(round%2==0)
                 {
-                    if (playOneRound(m_P2, BoardInterface::Tag::O, m_P1)) 
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
                 }
                 else
                 {
-                    if (playOneRound(m_P1, BoardInterface::Tag::X, m_P2)) 
+                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
                         continue;
                 }
-                //if (!playOneRound(now_player, tag, next_player)) break;
-                
-                /* print the result of each Borad */
-                //printBoard();
-                round++;
             }
            
             /* print the result of winner */
@@ -235,15 +226,10 @@ namespace TA
                 {               
                     if (j == 2 || j == 5) putToGui("|");
                     std::pair<int, int> pos = std::make_pair(i, j);
-<<<<<<< HEAD
-                    if(checkValid(pos) == true)  putToGui("⚪");
-                    else putToGui("⚫");
-=======
                     if(checkValid(pos) == true)  putToGui(" ");
                     else putToGui("*");
                     
-                    if (j == 2 || j == 5) putToGui("|");
->>>>>>> 4c2c01ba40d2cf2d8eb93cec675345b323e77b00
+                    
                 }
                 putToGui("\n                    ");
                 if (i == 2 || i == 5) putToGui("\n                    -------------------");
