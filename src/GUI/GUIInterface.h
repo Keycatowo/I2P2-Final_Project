@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cstdio>
 #include <string>
@@ -26,8 +26,13 @@ namespace TA
     {
         const static int GRAPH_HIGHT = 7 + 15;
         const static int GRAPH_WIDTH = 80;
+<<<<<<< HEAD
 
         const static int TEXT_HIGHT = 10;
+=======
+        
+        const static int TEXT_HIGHT = 19;
+>>>>>>> print_valid
         const static int TEXT_WIDTH = 80;
 
         std::string m_preparedText;
@@ -119,6 +124,7 @@ namespace TA
             showText();
         }
 
+<<<<<<< HEAD
         // print the tag on the board
         int toPrintChar(BoardInterface::Tag t) {
             switch (t) {
@@ -126,6 +132,14 @@ namespace TA
             case BoardInterface::Tag::X: return 'X';
             default:
                 return ' ';
+=======
+        int toPrintChar(BoardInterface::Tag t){
+            switch(t) {
+                case BoardInterface::Tag::O: return 'o';
+                case BoardInterface::Tag::X: return 'x';
+                default:
+                    return ' ';
+>>>>>>> print_valid
             }
         }
 
@@ -147,7 +161,11 @@ namespace TA
                 std::putchar('\n');
                 if (i == 2 || i == 5) {
                     std::printf("%s", buf.c_str());
+<<<<<<< HEAD
                     std::puts(std::string(12, '-').c_str());
+=======
+                    std::puts(std::string(11,'-').c_str());
+>>>>>>> print_valid
                 }
             }
 

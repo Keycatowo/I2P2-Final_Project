@@ -10,6 +10,7 @@
 #include <cstdarg>
 #include <future>
 #include <type_traits>
+#include <unistd.h>
 
 #include "GUI/keyboard.h"
 
@@ -139,6 +140,7 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
+                usleep(1000000);
                 updateGuiGame();
                 
                 round++;
@@ -157,9 +159,10 @@ namespace TA
                 /* print the result of each Borad */
                 //printBoard();
             }
-                    
+            printValid();
             /* print the result of winner */
             printBoard();
+            
             printWinner();
         }
 
@@ -176,13 +179,31 @@ namespace TA
             }
             //updateGuiGame();
         }
+        void printValid()
+        {
+          
+            for (int i = 0; i < 9; ++i)
+            {
+                for (int j = 0; j < 9; ++j)
+                {               
+                    std::pair<int, int> pos = std::make_pair(i, j);
+                    if(checkValid(pos) == true)  putToGui("⚪");
+                    else putToGui("⚫");
+                    
+                    if (j == 2 || j == 5) putToGui("|");
+                }
+                putToGui("\n                    ");
+                if (i == 2 || i == 5) putToGui("\n                    -------------------");
+            }
+            putToGui("\n");
+        }
 
         void printWinner()
         {
             if(MainBoard.judgeWinState() == BoardInterface::Tag::O)
-                putToGui("O wins\n");
+                putToGui("Ｏ wins\n");
             else if(MainBoard.judgeWinState() == BoardInterface::Tag::X)
-                putToGui("X wins\n");
+                putToGui("Ｘ wins\n");
             else if(MainBoard.judgeWinState() == BoardInterface::Tag::Tie)
                 putToGui("Tie\n");
             else if (0 <= round && round <=81)
