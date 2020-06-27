@@ -80,32 +80,32 @@ namespace TA
         void show_menu(int mode_pos = 0)
         {
             clear_text();
-            putToGui("Select the mode\n"); 
+            gui->appendText("\t\tSelect the mode\n"); 
             switch (mode_pos)
             {
             case 0:
-                putToGui("\t\t>[auto play]\n");
-                putToGui("\t\t [step play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t [Authors]\n");
+                gui->appendText("\t\t>[auto play]\n");
+                gui->appendText("\t\t [step play]\n");
+                gui->appendText("\t\t [person play]\n");
+                gui->appendText("\t\t [Authors]\n");
                 break;
             case 1:
-                putToGui("\t\t [auto play]\n");
-                putToGui("\t\t>[step play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t [Authors]\n");
+                gui->appendText("\t\t [auto play]\n");
+                gui->appendText("\t\t>[step play]\n");
+                gui->appendText("\t\t [person play]\n");
+                gui->appendText("\t\t [Authors]\n");
                 break;
             case 2:
-                putToGui("\t\t [auto play]\n");
-                putToGui("\t\t [step play]\n");
-                putToGui("\t\t>[person play]\n");
-                putToGui("\t\t [Authors]\n");
+                gui->appendText("\t\t [auto play]\n");
+                gui->appendText("\t\t [step play]\n");
+                gui->appendText("\t\t>[person play]\n");
+                gui->appendText("\t\t [Authors]\n");
                 break;
             case 3:
-                putToGui("\t\t [auto play]\n");
-                putToGui("\t\t [step play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t>[Authors]\n");
+                gui->appendText("\t\t [auto play]\n");
+                gui->appendText("\t\t [step play]\n");
+                gui->appendText("\t\t [person play]\n");
+                gui->appendText("\t\t>[Authors]\n");
                 break;
             
             default:
@@ -338,7 +338,7 @@ namespace TA
             return val.get();
         }
 
-        void putToGui(const char *fmt, ...)
+        /*void putToGui(const char *fmt, ...)
         {
             va_list args1;
             va_start(args1, fmt);
@@ -351,7 +351,13 @@ namespace TA
 
             if( buf.back() == 0 ) buf.pop_back();
             gui->appendText( std::string(buf.begin(), buf.end()) );
+        }*/
+        
+        void putToGui(std::string S)
+        {
+            gui->appendText(S);
         }
+
 
         bool checkAI(AIInterface *ptr)
         {
