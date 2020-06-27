@@ -11,6 +11,11 @@
 #include <future>
 #include <type_traits>
 
+#include "GUI/keyboard.h"
+
+#define MAX_MODE 2
+#define TEXT_SIZE 20
+
 namespace TA
 {
     class UltraOOXX
@@ -33,6 +38,7 @@ namespace TA
         void run()
         {
             gui->title();
+            mode = select_mode();
             round = 0;
             if( !prepareState() ) return ;
 
@@ -48,7 +54,86 @@ namespace TA
                     MainBoard.setWinTag(MainBoard.judgeWinState());
                 }
             */
+           switch (mode)
+           {
+            case 0:
+               auto_play();
+               break;
+            case 1:
 
+            default:
+               auto_play();
+           }
+            
+            
+        }
+
+   private:
+        void clear_text(int clear_size = TEXT_SIZE)
+        {
+            for(int i(0);i<clear_size;i++)
+                putToGui("\n");
+        }
+
+        void show_menu(int mode_pos = 0)
+        {
+            clear_text();
+            putToGui("Select the mode\n"); 
+            switch (mode_pos)
+            {
+            case 0:
+                putToGui("\t\t>[auto play]\n");
+                putToGui("\t\t [person play]\n");
+                putToGui("\t\t [Authors]\n");
+                break;
+            case 1:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t>[person play]\n");
+                putToGui("\t\t [Authors]\n");
+                break;
+            case 2:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [person play]\n");
+                putToGui("\t\t>[Authors]\n");
+                break;
+            
+            default:
+                break;
+            }
+            clear_text(3);
+        }
+
+        int select_mode()
+        {
+            int menu_pos = 0;
+            int d_pos = 0;
+            while(1){
+                show_menu(menu_pos);
+                d_pos = get_arrow();
+                switch (d_pos)
+                {
+                // up
+                case 1:
+                    menu_pos = menu_pos>0?menu_pos-1:0;
+                    break;
+                // down
+                case 2:
+                    menu_pos = menu_pos<2?menu_pos+1:2;
+                    break;
+                // enter
+                case 5:
+                    clear_text();
+                    return menu_pos;
+                    break;
+                default:
+                    continue;
+                }
+            }
+
+        }
+
+        void auto_play()
+        {
             //下棋
             while (!checkGameover()) 
             {
@@ -77,8 +162,6 @@ namespace TA
             printBoard();
             printWinner();
         }
-
-   private:
 
         void printBoard()
         {
@@ -221,6 +304,7 @@ namespace TA
         std::chrono::milliseconds m_runtime_limit;
         std::pair<int,int> last_put;
         int round;
+        int mode;
 
         AIInterface *m_P1;
         AIInterface *m_P2;
