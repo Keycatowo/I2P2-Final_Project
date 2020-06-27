@@ -21,69 +21,88 @@ namespace TA
     };
 
     using std::printf;
-    #define ESC "\033"
-    class ASCII: public GUIInterface
+#define ESC "\033"   // For ANSI Escape Sequence
+    class ASCII : public GUIInterface
     {
-        const static int GRAPH_HIGHT = 7+15;
+        const static int GRAPH_HIGHT = 7 + 15;
         const static int GRAPH_WIDTH = 80;
-        
+
         const static int TEXT_HIGHT = 10;
         const static int TEXT_WIDTH = 80;
 
         std::string m_preparedText;
         std::string m_textbuf;
 
+        // reset the screen
         void cls()
         {
-            printf( ESC "[H" ESC "[J" );
+            // ESC[H for moving cursor to home position(0, 0)
+            // ESC[J for clearing the screen
+            printf(ESC "[H" ESC "[J");
         }
 
+        // move to (x,y)
         void gotoxy(int y, int x)
         {
-            printf( ESC "\033[%d;%df", y, x);
+            // ESC[{line};{column}f for moving cursor to line #, column #
+            printf(ESC "\033[%d;%df", y, x);
         }
 
+        // set m_preparedText and m_textbuf
         void updateTextBuf()
         {
             std::stringstream ss(m_textbuf);
-            const std::string ban(TEXT_WIDTH, '-');
+            const std::string ban(TEXT_WIDTH, '-');  //string concatenation
             std::string tmp, last;
 
             m_preparedText.clear();
-            for(int L=0 ; L < TEXT_HIGHT - 2; ++L)
+            // cut the string into the size that fit the screen width
+            for (int L = 0; L < TEXT_HIGHT - 2; ++L)
             {
-                if( last == "" )
+                if (last == "")
+                    // Extracts characters from ss 
+                    // and stores them into last 
+                    // until the newline character is found.
                     getline(ss, last);
 
-                tmp = last.substr(0, std::min((size_t)TEXT_WIDTH, last.size()) );
-    
-                if( tmp.size() == last.size() )
+                // string::substr returns a newly constructed string object 
+                // with its value initialized to a copy of a substring of this object.
+                tmp = last.substr(0, std::min((size_t)TEXT_WIDTH, last.size()));
+
+                if (tmp.size() == last.size())
+                    // if string last is completely copied to tmp
+                    // then clear the string
                     last = "";
-                else 
+                else
+                    // else store the rest string in last
                     last = last.substr(TEXT_WIDTH);
-    
+                // m_preparedText is the string that cut into the size
+                // that fit the screen width by '\n'
                 m_preparedText = tmp + "\n" + m_preparedText;
             }
+            // m_textbuf is the string that can fill in all screen
             m_textbuf = m_textbuf.substr(0, TEXT_HIGHT * TEXT_WIDTH);
-            m_preparedText =  ban + "\n" + m_preparedText + ban;
+
+            m_preparedText = ban + "\n" + m_preparedText + ban;
         }
 
         void showText()
         {
-            gotoxy(GRAPH_HIGHT+1, 0);
-            printf( ESC "[J" );
-            gotoxy(GRAPH_HIGHT+1, 0);
-            puts(m_preparedText.c_str());
-            gotoxy(GRAPH_HIGHT+TEXT_HIGHT+1, 0);
-            std::fflush(stdout);
+            gotoxy(GRAPH_HIGHT + 1, 0);             // move cursor
+            printf(ESC "[J");                   // clean the screen
+            gotoxy(GRAPH_HIGHT + 1, 0);             // move cursor
+            puts(m_preparedText.c_str());         // inserts character c into the stream.
+            gotoxy(GRAPH_HIGHT + TEXT_HIGHT + 1, 0);  // move cursor
+            std::fflush(stdout);                  // clean the string in buff by printing
         }
 
     public:
+        // put the pic-string in to buff
         virtual void title() override
         {
             cls();
             puts(
-R"( _   _ _ _             _____  _______   ____   __
+                R"( _   _ _ _             _____  _______   ____   __
 | | | | | |           |  _  ||  _  \ \ / /\ \ / /
 | | | | | |_ _ __ __ _| | | || | | |\ V /  \ V /
 | | | | | __| '__/ _` | | | || | | |/   \  /   \
@@ -92,6 +111,7 @@ R"( _   _ _ _             _____  _______   ____   __
 )");
         }
 
+        // by up dating m_textbuf
         virtual void appendText(std::string str)
         {
             m_textbuf = str + m_textbuf;
@@ -99,37 +119,40 @@ R"( _   _ _ _             _____  _______   ____   __
             showText();
         }
 
-        int toPrintChar(BoardInterface::Tag t){
-            switch(t) {
-                case BoardInterface::Tag::O: return 'O';
-                case BoardInterface::Tag::X: return 'X';
-                default:
-                    return ' ';
+        // print the tag on the board
+        int toPrintChar(BoardInterface::Tag t) {
+            switch (t) {
+            case BoardInterface::Tag::O: return 'O';
+            case BoardInterface::Tag::X: return 'X';
+            default:
+                return ' ';
             }
         }
 
+        // print the board
         virtual void updateGame(UltraBoard b)
         {
-            gotoxy(7+1, 0);
+            gotoxy(7 + 1, 0);
             const std::string buf(20, ' ');
 
-            for (int i=0;i<9;++i)
+            for (int i = 0; i < 9; ++i)
             {
                 std::printf("%s", buf.c_str());
-                for (int j=0;j<9;++j)
+                //print one row board
+                for (int j = 0; j < 9; ++j)
                 {
                     std::putchar(toPrintChar(b.get(i, j)));
                     if (j == 2 || j == 5) std::putchar('|');
                 }
                 std::putchar('\n');
-                if (i==2 ||i==5) {
+                if (i == 2 || i == 5) {
                     std::printf("%s", buf.c_str());
-                    std::puts(std::string(12,'-').c_str());
+                    std::puts(std::string(12, '-').c_str());
                 }
             }
 
-            gotoxy(GRAPH_HIGHT+TEXT_HIGHT+1, 0);
+            gotoxy(GRAPH_HIGHT + TEXT_HIGHT + 1, 0);
         }
     };
-    #undef ESC
+#undef ESC
 }
