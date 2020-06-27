@@ -10,6 +10,7 @@
 #include <cstdarg>
 #include <future>
 #include <type_traits>
+#include <unistd.h>
 
 namespace TA
 {
@@ -54,6 +55,7 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
+                usleep(1000000);
                 updateGuiGame();
                 
                 round++;
