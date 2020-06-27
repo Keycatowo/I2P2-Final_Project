@@ -150,7 +150,7 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
-                usleep(1000000);
+                usleep(200000);
                 updateGuiGame();
                 
                 round++;
