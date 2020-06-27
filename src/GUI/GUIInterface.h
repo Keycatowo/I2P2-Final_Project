@@ -16,8 +16,8 @@ namespace TA
     {
     public:
         virtual void title() = 0;
-        virtual void appendText(std::string str) = 0;
-        virtual void updateGame(UltraBoard b) = 0;
+        virtual void appendText(std::string str, int round) = 0;
+        virtual void updateGame(UltraBoard b, int round) = 0;
     };
 
     using std::printf;
@@ -86,13 +86,13 @@ namespace TA
             m_preparedText = ban + "\n" + m_preparedText + ban;
         }
 
-        void showText()
+        void showText(int round)
         {
-            gotoxy(GRAPH_HIGHT + 1, 0);             // move cursor
-            printf(ESC "[J");                   // clean the screen
-            gotoxy(GRAPH_HIGHT + 1, 0);             // move cursor
+            //gotoxy(GRAPH_HIGHT + 1, 0);             // move cursor
+            //printf(ESC "[J");                   // clean the screen
+            gotoxy(GRAPH_HIGHT*(round) + TEXT_HIGHT*(round-1), 0);             // move cursor
             puts(m_preparedText.c_str());         // inserts character c into the stream.
-            gotoxy(GRAPH_HIGHT + TEXT_HIGHT + 1, 0);  // move cursor
+            gotoxy(GRAPH_HIGHT*round + TEXT_HIGHT*round + 1, 0);  // move cursor
             std::fflush(stdout);                  // clean the string in buff by printing
         }
 
@@ -112,11 +112,11 @@ namespace TA
         }
 
         // by up dating m_textbuf
-        virtual void appendText(std::string str)
+        virtual void appendText(std::string str, int round)
         {
             m_textbuf = str + m_textbuf;
             updateTextBuf();
-            showText();
+            showText(round);
         }
 
         // print the tag on the board
@@ -130,9 +130,12 @@ namespace TA
         }
 
         // print the board
-        virtual void updateGame(UltraBoard b)
+        virtual void updateGame(UltraBoard b, int round)
         {
-            gotoxy(7 + 1, 0);
+            int x;
+            if (round == 0) x = 7 + 1;
+            else x = GRAPH_HIGHT *round + TEXT_HIGHT *round + 2;
+            gotoxy(x, 0);
             const std::string buf(20, ' ');
 
             for (int i = 0; i < 9; ++i)
@@ -151,7 +154,7 @@ namespace TA
                 }
             }
 
-            gotoxy(GRAPH_HIGHT + TEXT_HIGHT + 1, 0);
+            gotoxy(0, 0);
         }
     };
 #undef ESC
