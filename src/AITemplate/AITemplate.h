@@ -51,6 +51,8 @@ public:
                 }
             }
         }
+
+        /* random AI */
         std::srand ( unsigned ( std::time(0) ) );
         std::random_shuffle(avaliable_points.begin(),avaliable_points.end());
         for(auto i :avaliable_points)
@@ -167,4 +169,24 @@ private:
     TA::Board::Tag you_tag;
     int x;
     int y;
+
+    void check_order(TA::UltraBoard mainboard){
+        int count = 0;
+        for(int i=0;i<8;i++)
+            for(int j=0;j<8;j++)
+                if(mainboard.get(i,j)!=TA::Board::Tag::None)
+                    ++count;
+        if(count%2 == 0){
+            order = true;
+            we_tag = TA::Board::Tag::O;
+            you_tag = TA::Board::Tag::X;
+        }
+        else
+        {
+            order = false;
+            we_tag = TA::Board::Tag::X;
+            you_tag = TA::Board::Tag::O;
+        }
+        
+    }
 };
