@@ -142,8 +142,8 @@ namespace TA
                 //printBoard();
                 usleep(1000000);
                 updateGuiGame();
-                
-                round++;
+                printValid();
+                printBoard();
                 if(round%2==0)
                 {
                     if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
@@ -155,21 +155,22 @@ namespace TA
                         continue;
                 }
                 //if (!playOneRound(now_player, tag, next_player)) break;
-
+                
                 /* print the result of each Borad */
                 //printBoard();
+                round++;
             }
-            printValid();
+           
             /* print the result of winner */
+            printValid();
             printBoard();
-            
             printWinner();
         }
 
         void printBoard()
         {
             for (int i=0; i<3; ++i){
-                for (int j=0; j<3; ++j){
+                for (int j=2; j>=0; --j){
                     if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)        putToGui("O");
                     else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::X)   putToGui("X");
                     else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::Tie) putToGui("*");
@@ -184,13 +185,12 @@ namespace TA
           
             for (int i = 0; i < 9; ++i)
             {
-                for (int j = 0; j < 9; ++j)
+                for (int j = 8; j >= 0; --j)
                 {               
+                    if (j == 2 || j == 5) putToGui("|");
                     std::pair<int, int> pos = std::make_pair(i, j);
                     if(checkValid(pos) == true)  putToGui("⚪");
                     else putToGui("⚫");
-                    
-                    if (j == 2 || j == 5) putToGui("|");
                 }
                 putToGui("\n                    ");
                 if (i == 2 || i == 5) putToGui("\n                    -------------------");
