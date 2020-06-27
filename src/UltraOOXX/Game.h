@@ -52,30 +52,29 @@ namespace TA
             //下棋
             while (!checkGameover()) 
             {
-                AIInterface *now_player, *next_player;
-                BoardInterface::Tag tag;
-
+                /* print the result of each Borad */
+                //printBoard();
+                updateGuiGame();
+                
                 round++;
                 if(round%2==0)
                 {
-                    now_player = m_P1;
-                    next_player = m_P2;
-                    tag = BoardInterface::Tag::O;
+                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
+                        continue;
                 }
                 else
                 {
-                    now_player = m_P2;
-                    next_player = m_P1;
-                    tag = BoardInterface::Tag::X;
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                        continue;
                 }
-
-                if (!playOneRound(now_player, tag, next_player)) break;
+                //if (!playOneRound(now_player, tag, next_player)) break;
 
                 /* print the result of each Borad */
-                printBoard();
+                //printBoard();
             }
                     
             /* print the result of winner */
+            printBoard();
             printWinner();
         }
 
@@ -125,17 +124,19 @@ namespace TA
             next_player->callbackReportEnemy(pos.first, pos.second);
             if( MainBoard.sub(pos.first%3,pos.second%3).full() ) last_put=std::make_pair(-1,-1);
             else last_put=pos;
+            return true;
         }
 
         bool checkValid( std::pair<int,int> pos)
         {
-            
+            if(pos.first<0 || pos.first >8 || pos.second <0 || pos.second >8)
+                return false;
             //檢查是否下在非法的位置上
             //如果位置非法，則判定輸掉比賽
             //先檢查last_pos下在board的哪裡，然後再檢查pos下在ultra_board的位置
             if(TA::UltraOOXX::MainBoard.get(pos.first,pos.second)==BoardInterface::Tag::None)
             { 
-                if(last_put.first == -1 && last_put.second == -1) return true;
+                if(last_put.first == -1) return true;
                 else if(last_put.first%3==pos.first/3&&last_put.second%3==pos.second/3) return true;
             }
             return false;
