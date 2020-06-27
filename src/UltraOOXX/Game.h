@@ -186,7 +186,8 @@ namespace TA
                 std::string line;
                 std::getline(std::cin,line);
                 updateGuiGame();
-                
+                printValid();
+                printBoard();
                 round++;
                 if(round%2==0)
                 {
@@ -202,6 +203,7 @@ namespace TA
 
                 /* print the result of each Borad */
                 //printBoard();
+                
             }
             printValid();
             /* print the result of winner */
@@ -232,8 +234,8 @@ namespace TA
                 for (int j = 0; j < 9; ++j)
                 {               
                     std::pair<int, int> pos = std::make_pair(i, j);
-                    if(checkValid(pos) == true)  putToGui("⚪");
-                    else putToGui("⚫");
+                    if(checkValid(pos) == true)  putToGui(" ");
+                    else putToGui("*");
                     
                     if (j == 2 || j == 5) putToGui("|");
                 }
