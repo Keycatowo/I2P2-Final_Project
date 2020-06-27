@@ -14,7 +14,7 @@
 
 #include "GUI/keyboard.h"
 
-#define MAX_MODE 2
+#define MAX_MODE 3
 #define TEXT_SIZE 20
 
 namespace TA
@@ -61,7 +61,8 @@ namespace TA
                auto_play();
                break;
             case 1:
-
+                step_play();
+                break;
             default:
                auto_play();
            }
@@ -84,16 +85,25 @@ namespace TA
             {
             case 0:
                 putToGui("\t\t>[auto play]\n");
+                putToGui("\t\t [step play]\n");
                 putToGui("\t\t [person play]\n");
                 putToGui("\t\t [Authors]\n");
                 break;
             case 1:
                 putToGui("\t\t [auto play]\n");
-                putToGui("\t\t>[person play]\n");
+                putToGui("\t\t>[step play]\n");
+                putToGui("\t\t [person play]\n");
                 putToGui("\t\t [Authors]\n");
                 break;
             case 2:
                 putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t>[person play]\n");
+                putToGui("\t\t [Authors]\n");
+                break;
+            case 3:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
                 putToGui("\t\t [person play]\n");
                 putToGui("\t\t>[Authors]\n");
                 break;
@@ -119,7 +129,7 @@ namespace TA
                     break;
                 // down
                 case 2:
-                    menu_pos = menu_pos<2?menu_pos+1:2;
+                    menu_pos = menu_pos<MAX_MODE?menu_pos+1:MAX_MODE;
                     break;
                 // enter
                 case 5:
@@ -140,18 +150,53 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
-                usleep(1000000);
+                usleep(100000);
                 updateGuiGame();
                 printValid();
                 printBoard();
                 if(round%2==0)
                 {
-                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
+                    if (playOneRound(m_P2, BoardInterface::Tag::O, m_P1)) 
                         continue;
                 }
                 else
                 {
-                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                    if (playOneRound(m_P1, BoardInterface::Tag::X, m_P2)) 
+                        continue;
+                }
+                //if (!playOneRound(now_player, tag, next_player)) break;
+
+                /* print the result of each Borad */
+                //printBoard();
+            }
+            printValid();
+            /* print the result of winner */
+            printBoard();
+            
+            printWinner();
+        }
+
+        void step_play()
+        {
+            //下棋
+            while (!checkGameover()) 
+            {
+                /* print the result of each Borad */
+                //printBoard();
+                std::string line;
+                std::getline(std::cin,line);
+                updateGuiGame();
+                printValid();
+                printBoard();
+                round++;
+                if(round%2==0)
+                {
+                    if (playOneRound(m_P2, BoardInterface::Tag::O, m_P1)) 
+                        continue;
+                }
+                else
+                {
+                    if (playOneRound(m_P1, BoardInterface::Tag::X, m_P2)) 
                         continue;
                 }
                 //if (!playOneRound(now_player, tag, next_player)) break;
@@ -166,6 +211,7 @@ namespace TA
             printBoard();
             printWinner();
         }
+
 
         void printBoard()
         {
@@ -189,8 +235,15 @@ namespace TA
                 {               
                     if (j == 2 || j == 5) putToGui("|");
                     std::pair<int, int> pos = std::make_pair(i, j);
+<<<<<<< HEAD
                     if(checkValid(pos) == true)  putToGui("⚪");
                     else putToGui("⚫");
+=======
+                    if(checkValid(pos) == true)  putToGui(" ");
+                    else putToGui("*");
+                    
+                    if (j == 2 || j == 5) putToGui("|");
+>>>>>>> 4c2c01ba40d2cf2d8eb93cec675345b323e77b00
                 }
                 putToGui("\n                    ");
                 if (i == 2 || i == 5) putToGui("\n                    -------------------");
