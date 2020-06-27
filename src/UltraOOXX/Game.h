@@ -158,7 +158,7 @@ namespace TA
             {
                 /* print the result of each Borad */
                 //printBoard();
-                usleep(20000000);
+                usleep(1000000);
                 updateGuiGame();
                 printBoard();
                 printValid();
@@ -309,6 +309,9 @@ namespace TA
             auto pos = call(&AIInterface::queryWhereToPut, now_player, MainBoard);
             if(!checkValid(pos)) return false;
             MainBoard.get(pos.first, pos.second) = tag;
+            //set
+            MainBoard.sub(pos.first/3,pos.second/3).setWinTag(MainBoard.sub(pos.first/3,pos.second/3).judgeWinState());
+            MainBoard.setWinTag(MainBoard.judgeWinState());
             next_player->callbackReportEnemy(pos.first, pos.second);
             if( MainBoard.sub(pos.first%3,pos.second%3).full() ) last_put=std::make_pair(-1,-1);
             else last_put=pos;
