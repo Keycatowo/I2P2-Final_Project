@@ -14,7 +14,7 @@
 
 #include "GUI/keyboard.h"
 
-#define MAX_MODE 2
+#define MAX_MODE 4
 #define TEXT_SIZE 20
 
 namespace TA
@@ -44,24 +44,23 @@ namespace TA
             if( !prepareState() ) return ;
 
             //Todo: Play Game
-            /*
-            for (int i=0; i<9; ++i)
-                for (int j=0; j<9; ++j){
-                    if((i+j)%2)
-                        MainBoard.get(i,j)=BoardInterface::Tag::O;
-                    else
-                        MainBoard.get(i,j)=BoardInterface::Tag::X;
-                    MainBoard.sub(i/3,j/3).setWinTag(MainBoard.sub(i/3,j/3).judgeWinState());
-                    MainBoard.setWinTag(MainBoard.judgeWinState());
-                }
-            */
            switch (mode)
            {
             case 0:
                auto_play();
                break;
             case 1:
-
+                step_play();
+                break;
+            case 2:
+                PVE(0);
+                break;
+            case 3:
+                PVE(1);
+                break;
+            case 4:
+                exit(0);
+                break;
             default:
                auto_play();
            }
@@ -70,6 +69,11 @@ namespace TA
         }
 
    private:
+        void putToGui(std::string S)
+        {
+            gui->appendText(S);
+        }
+
         void clear_text(int clear_size = TEXT_SIZE)
         {
             for(int i(0);i<clear_size;i++)
@@ -79,24 +83,43 @@ namespace TA
         void show_menu(int mode_pos = 0)
         {
             clear_text();
-            putToGui("Select the mode\n"); 
+            putToGui("\t\tSelect the mode\n"); 
             switch (mode_pos)
             {
             case 0:
                 putToGui("\t\t>[auto play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t [Authors]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
             case 1:
                 putToGui("\t\t [auto play]\n");
-                putToGui("\t\t>[person play]\n");
-                putToGui("\t\t [Authors]\n");
+                putToGui("\t\t>[step play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
             case 2:
                 putToGui("\t\t [auto play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t>[Authors]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t>[person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
+            case 3:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t>[person play(second)]\n");
+                putToGui("\t\t [Exit]\n");
+                break;
+            case 4:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
+                putToGui("\t\t>[Exit]\n");
             
             default:
                 break;
@@ -119,7 +142,7 @@ namespace TA
                     break;
                 // down
                 case 2:
-                    menu_pos = menu_pos<2?menu_pos+1:2;
+                    menu_pos = menu_pos<MAX_MODE?menu_pos+1:MAX_MODE;
                     break;
                 // enter
                 case 5:
@@ -142,34 +165,124 @@ namespace TA
                 //printBoard();
                 usleep(1000000);
                 updateGuiGame();
-                
+                printBoard();
+                printValid();
                 round++;
                 if(round%2==0)
                 {
-                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
                 }
                 else
                 {
-                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
                         continue;
+                    else
+                    {
+                        putToGui("O puts incalid!\nX wins");
+                        exit(1);
+                    }
                 }
-                //if (!playOneRound(now_player, tag, next_player)) break;
-
-                /* print the result of each Borad */
-                //printBoard();
+                
             }
             printValid();
-            /* print the result of winner */
             printBoard();
-            
+            printWinner();
+        }
+
+        void step_play()
+        {
+            //下棋
+            while (!checkGameover()) 
+            {
+                /* print the result of each Borad */
+                //printBoard();
+                std::string line;
+                std::getline(std::cin,line);
+                updateGuiGame();
+                printValid();
+                printBoard();
+                round++;
+                if(round%2==0)
+                {
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                        continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
+                        continue;
+                    else
+                    {
+                        putToGui("O puts incalid!\nX wins");
+                        exit(1);
+                    }
+                }
+            }
+           
+            /* print the result of winner */
+            printValid();
+            printBoard();
+            printWinner();
+        }
+
+        void PVE(int order = 0)
+        {
+            //下棋
+            while (!checkGameover()) 
+            {
+                updateGuiGame();
+                printValid();
+                printBoard();
+                round++;
+                if(round%2==order)
+                {
+                    if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
+                        continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    ppos = std::make_pair(-1,-1);
+                    do{
+                        std::cin>>ppos.first>>ppos.second;
+                    }while(!checkValid(ppos));
+                    
+                    MainBoard.get(ppos.first, ppos.second) = BoardInterface::Tag::O;
+                    m_P2->callbackReportEnemy(ppos.first, ppos.second);
+                    if( MainBoard.sub(ppos.first%3,ppos.second%3).full() ) 
+                        last_put=std::make_pair(-1,-1);
+                    else 
+                        last_put=ppos;
+                    
+                    continue;
+                }
+            }
+           
+            /* print the result of winner */
+            printValid();
+            printBoard();
             printWinner();
         }
 
         void printBoard()
         {
             for (int i=0; i<3; ++i){
-                for (int j=0; j<3; ++j){
+                for (int j=2; j>=0; --j){
                     if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::O)        putToGui("O");
                     else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::X)   putToGui("X");
                     else if(MainBoard.sub(i,j).judgeWinState() == BoardInterface::Tag::Tie) putToGui("*");
@@ -184,13 +297,14 @@ namespace TA
           
             for (int i = 0; i < 9; ++i)
             {
-                for (int j = 0; j < 9; ++j)
+                for (int j = 8; j >= 0; --j)
                 {               
-                    std::pair<int, int> pos = std::make_pair(i, j);
-                    if(checkValid(pos) == true)  putToGui("⚪");
-                    else putToGui("⚫");
-                    
                     if (j == 2 || j == 5) putToGui("|");
+                    std::pair<int, int> pos = std::make_pair(i, j);
+                    if(checkValid(pos) == true)  putToGui(" ");
+                    else putToGui("*");
+                    
+                    
                 }
                 putToGui("\n                    ");
                 if (i == 2 || i == 5) putToGui("\n                    -------------------");
@@ -225,6 +339,9 @@ namespace TA
             auto pos = call(&AIInterface::queryWhereToPut, now_player, MainBoard);
             if(!checkValid(pos)) return false;
             MainBoard.get(pos.first, pos.second) = tag;
+            //set
+            MainBoard.sub(pos.first/3,pos.second/3).setWinTag(MainBoard.sub(pos.first/3,pos.second/3).judgeWinState());
+            MainBoard.setWinTag(MainBoard.judgeWinState());
             next_player->callbackReportEnemy(pos.first, pos.second);
             if( MainBoard.sub(pos.first%3,pos.second%3).full() ) last_put=std::make_pair(-1,-1);
             else last_put=pos;
@@ -233,6 +350,7 @@ namespace TA
 
         bool checkValid( std::pair<int,int> pos)
         {
+            //if(pos.first==-1 && pos.second==-1) return true;
             if(pos.first<0 || pos.first >8 || pos.second <0 || pos.second >8)
                 return false;
             //檢查是否下在非法的位置上
@@ -299,7 +417,7 @@ namespace TA
             return val.get();
         }
 
-        void putToGui(const char *fmt, ...)
+        /*void putToGui(const char *fmt, ...)
         {
             va_list args1;
             va_start(args1, fmt);
@@ -312,7 +430,10 @@ namespace TA
 
             if( buf.back() == 0 ) buf.pop_back();
             gui->appendText( std::string(buf.begin(), buf.end()) );
-        }
+        }*/
+        
+        
+
 
         bool checkAI(AIInterface *ptr)
         {
@@ -324,6 +445,7 @@ namespace TA
         std::vector<int> m_ship_size;
         std::chrono::milliseconds m_runtime_limit;
         std::pair<int,int> last_put;
+        std::pair<int,int> ppos;
         int round;
         int mode;
 
