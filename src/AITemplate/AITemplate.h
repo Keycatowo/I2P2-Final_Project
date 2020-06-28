@@ -14,7 +14,7 @@ public:
     void init(bool order) override
     {
         // any way
-        check5 = 7;
+        //check5 = 7;
         this->order = order;
         we_tag = order ? TA::Board::Tag::O : TA::Board::Tag::X;
         you_tag = order ? TA::Board::Tag::X : TA::Board::Tag::O;
@@ -207,7 +207,7 @@ public:
         // for(auto i : avaliable_points)
         //     return i;
 
-        // /* none */
+         /* none */
         return std::make_pair(-1, -1);
     }
 
@@ -233,6 +233,7 @@ private:
     TA::Board::Tag you_tag;
     int x;
     int y;
+    std::set< std::pair<int,int> > give_up;
 
     void check_order(TA::UltraBoard mainboard){
         int count = 0;
