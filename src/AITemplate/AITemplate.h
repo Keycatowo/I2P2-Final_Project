@@ -14,12 +14,13 @@ public:
     void init(bool order) override
     {
         // any way
-        check5 = 7;
         this->order = order;
         we_tag = order ? TA::Board::Tag::O : TA::Board::Tag::X;
         you_tag = order ? TA::Board::Tag::X : TA::Board::Tag::O;
         x = -1;
         y = -1;
+        endgame_x= -1;
+        endgame_y = -1;
         give_up.clear();
         // give_up.insert(std::make_pair(1,1));
     }
@@ -33,6 +34,7 @@ public:
 
     std::pair<int, int> queryWhereToPut(TA::UltraBoard mainboard) override
     {
+        check_order(mainboard);
         auto target_board = WhereCanPut(mainboard); // check which board we can put
         std::vector<std::pair<int, int>> avaliable_points;
         if (target_board.first == -1) // search the whole UltraBoard
@@ -58,25 +60,56 @@ public:
             }
         }
 
+        /* middle of middle */
         if (mainboard.get(4, 4) == TA::Board::Tag::None)
         {
             give_up.insert(std::make_pair(1, 1));
             return std::make_pair(4, 4);
         }
 
+        /* all board -> goto the other side */ 
         if (target_board.first == -1)
         {
             auto accross = std::make_pair(2 - x / 3, 2 - y / 3);
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 3; j++)
-                    if (give_up.count(std::make_pair(i, j)) > 0 && mainboard.get(accross.first * 3 + i, accross.second * 3 + j) != TA::Board::Tag::None)
-                        return std::make_pair(accross.first * 3 + i, accross.second * 3 + j);
+            if(mainboard.get(accross.first*3+x/3, accross.second*3+y/3) == TA::Board::Tag::None){
+                return std::make_pair(accross.first*3+x/3, accross.second*3+y/3);
+            }
+            if(mainboard.get(accross.first*4,accross.second*4) == TA::Board::Tag::None){
+                give_up.insert(accross);
+                return std::make_pair(accross.first*4,accross.second*4);
+            }
+            // for (int i = 0; i < 3; i++)
+            //     for (int j = 0; j < 3; j++){
+            //         auto tmp_pos = std::make_pair(accross.first*3+i, accross.second*3+j);
+            //         if(mainboard.get(tmp_pos.first, tmp_pos.second) == TA::Board::Tag::None){
+            //             mainboard.get(tmp_pos.first, tmp_pos.second) = we_tag;
+            //             //mainboard.sub(accross.first, accross.second).setWinTag(tmp_mainboard.sub(accross.first,accross.second).judgeWinState());
+            //             if(mainboard.sub(accross.first,accross.second).judgeWinState()== we_tag)
+            //                 return tmp_pos;
+            //             else
+            //             {
+            //                 mainboard.get(tmp_pos.first, tmp_pos.second) = TA::Board::Tag::None;
+            //             }
+                        
+            //         }
+            //     }
+            exit(1);
         }
+        
 
+          // /* check 1 : can end the game */
+        // for (auto i : avaliable_points){
+        //     tmp_mainboard = mainboard;
+        //     tmp_mainboard.get(i.first, i.second) = we_tag;
+        //     if(tmp_mainboard.judgeWinState() == we_tag)
+        //         return i;
+        // }
+
+        /* same board same place */
         for (auto i : avaliable_points)
             if (give_up.count(std::make_pair(i.first % 3, i.second % 3)) > 0 && !(mainboard.sub(i.first % 3, i.second % 3).full()))
                 return i;
-
+        
         for (auto i : avaliable_points)
             if (i.first / 3 == i.first % 3 && i.second / 3 == i.second % 3)
             {
@@ -202,10 +235,11 @@ public:
         //         return i;
         // }
 
+        std::random_shuffle(avaliable_points.begin(),avaliable_points.end());
         // /* check 8 : empty place */
         // std::reverse(avaliable_points.begin(), avaliable_points.end());
-        // for(auto i : avaliable_points)
-        //     return i;
+        for(auto i : avaliable_points)
+            return i;
 
         // /* none */
         return std::make_pair(-1, -1);
@@ -233,7 +267,9 @@ private:
     TA::Board::Tag you_tag;
     int x;
     int y;
-
+    std::set<std::pair<int, int>> give_up;
+    int endgame_x;
+    int endgame_y;
     void check_order(TA::UltraBoard mainboard){
         int count = 0;
         for(int i=0;i<8;i++)

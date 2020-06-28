@@ -170,11 +170,21 @@ namespace TA
                 {
                     if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
                 }
                 else
                 {
                     if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
                         continue;
+                    else
+                    {
+                        putToGui("O puts incalid!\nX wins");
+                        exit(1);
+                    }
                 }
                 
             }
@@ -200,11 +210,21 @@ namespace TA
                 {
                     if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
                 }
                 else
                 {
                     if (playOneRound(m_P1, BoardInterface::Tag::O, m_P2)) 
                         continue;
+                    else
+                    {
+                        putToGui("O puts incalid!\nX wins");
+                        exit(1);
+                    }
                 }
             }
            
@@ -223,17 +243,22 @@ namespace TA
                 printValid();
                 printBoard();
                 round++;
-                if(round%2==1)
+                if(round%2==0)
                 {
                     if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
+                    else
+                    {
+                        putToGui("X puts incalid!\nO wins");
+                        exit(1);
+                    }
                 }
                 else
                 {
                     ppos = std::make_pair(-1,-1);
-                    //do{
+                    do{
                         std::cin>>ppos.first>>ppos.second;
-                    //}while(!checkValid(ppos));
+                    }while(!checkValid(ppos));
                     
                     MainBoard.get(ppos.first, ppos.second) = BoardInterface::Tag::O;
                     m_P2->callbackReportEnemy(ppos.first, ppos.second);
