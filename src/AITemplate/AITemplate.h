@@ -61,10 +61,15 @@ public:
         }
 
         /* middle of middle */
-        if (mainboard.get(4, 4) == TA::Board::Tag::None)
+        if (mainboard.get(4, 4) == TA::Board::Tag::None ) 
         {
-            give_up.insert(std::make_pair(1, 1));
-            return std::make_pair(4, 4);
+            for(auto i:avaliable_points){
+                if(i.first==4 && i.second == 4){
+                    give_up.insert(std::make_pair(1, 1));
+                    return std::make_pair(4, 4);
+                }
+            }
+            
         }
 
         /* all board -> goto the other side */ 
