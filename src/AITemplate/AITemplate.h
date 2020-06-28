@@ -93,7 +93,7 @@ public:
                         
             //         }
             //     }
-            exit(1);
+            
         }
         
 
@@ -215,11 +215,11 @@ public:
         //         begin++;
         // }
 
-        // /* check 2 : put the Board already had result */
-        // for(auto i : avaliable_points){
-        //     if(mainboard.sub(i.first/3, i.second/3).judgeWinState() != TA::Board::Tag::None)
-        //         return i;
-        // }
+        /* check 2 : put the Board already had result */
+        for(auto i : avaliable_points){
+            if(mainboard.sub(i.first/3, i.second/3).judgeWinState() != TA::Board::Tag::None)
+                return i;
+        }
 
         // /* check 6 : other middles */
         // for(auto i: avaliable_points){
@@ -235,6 +235,7 @@ public:
         //         return i;
         // }
 
+        std::srand(unsigned(time(0)));
         std::random_shuffle(avaliable_points.begin(),avaliable_points.end());
         // /* check 8 : empty place */
         // std::reverse(avaliable_points.begin(), avaliable_points.end());

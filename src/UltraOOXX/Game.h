@@ -14,7 +14,7 @@
 
 #include "GUI/keyboard.h"
 
-#define MAX_MODE 3
+#define MAX_MODE 4
 #define TEXT_SIZE 20
 
 namespace TA
@@ -44,17 +44,6 @@ namespace TA
             if( !prepareState() ) return ;
 
             //Todo: Play Game
-            /*
-            for (int i=0; i<9; ++i)
-                for (int j=0; j<9; ++j){
-                    if((i+j)%2)
-                        MainBoard.get(i,j)=BoardInterface::Tag::O;
-                    else
-                        MainBoard.get(i,j)=BoardInterface::Tag::X;
-                    MainBoard.sub(i/3,j/3).setWinTag(MainBoard.sub(i/3,j/3).judgeWinState());
-                    MainBoard.setWinTag(MainBoard.judgeWinState());
-                }
-            */
            switch (mode)
            {
             case 0:
@@ -64,9 +53,12 @@ namespace TA
                 step_play();
                 break;
             case 2:
-                PVE();
+                PVE(0);
                 break;
             case 3:
+                PVE(1);
+                break;
+            case 4:
                 exit(0);
                 break;
             default:
@@ -97,27 +89,37 @@ namespace TA
             case 0:
                 putToGui("\t\t>[auto play]\n");
                 putToGui("\t\t [step play]\n");
-                putToGui("\t\t [person play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
                 putToGui("\t\t [Exit]\n");
                 break;
             case 1:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t>[step play]\n");
-                putToGui("\t\t [person play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
                 putToGui("\t\t [Exit]\n");
                 break;
             case 2:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t [step play]\n");
-                putToGui("\t\t>[person play]\n");
+                putToGui("\t\t>[person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
                 putToGui("\t\t [Exit]\n");
                 break;
             case 3:
                 putToGui("\t\t [auto play]\n");
                 putToGui("\t\t [step play]\n");
-                putToGui("\t\t [person play]\n");
-                putToGui("\t\t>[Exit]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t>[person play(second)]\n");
+                putToGui("\t\t [Exit]\n");
                 break;
+            case 4:
+                putToGui("\t\t [auto play]\n");
+                putToGui("\t\t [step play]\n");
+                putToGui("\t\t [person play(first)]\n");
+                putToGui("\t\t [person play(second)]\n");
+                putToGui("\t\t>[Exit]\n");
             
             default:
                 break;
@@ -234,7 +236,7 @@ namespace TA
             printWinner();
         }
 
-        void PVE()
+        void PVE(int order = 0)
         {
             //下棋
             while (!checkGameover()) 
@@ -243,7 +245,7 @@ namespace TA
                 printValid();
                 printBoard();
                 round++;
-                if(round%2==0)
+                if(round%2==order)
                 {
                     if (playOneRound(m_P2, BoardInterface::Tag::X, m_P1)) 
                         continue;
